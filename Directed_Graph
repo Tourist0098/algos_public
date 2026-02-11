@@ -37,4 +37,18 @@ public class Di_Graph {
         }
         return visited;
     }
+//Under construction
+    public int cycle_count(int vertex, HashMap<Integer, Boolean> marked, ArrayList<Integer> visited){
+        int c = 0;
+        visit(visited, vertex);
+        marked.put(vertex, true);
+        ArrayList<Integer> neighbours = getNeighbours(vertex);
+        if(neighbours != null){
+            for(int i = 0; i < neighbours.size(); i++){
+                int w = neighbours.get(i);
+                if(marked.containsKey(w) == true)
+                    return c++;
+            }
+        }
+    }
 }
