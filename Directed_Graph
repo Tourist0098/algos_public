@@ -1,0 +1,40 @@
+package DFS;
+import java.util.*;
+
+public class Di_Graph {
+    public HashMap<Integer, ArrayList<Integer>> adjList;
+    public Di_Graph(){
+        this.adjList = new HashMap<>();
+    }
+    public Set<Integer> setKey(){
+        return adjList.keySet();
+    }
+    public void addEdge(int src, int dest){
+        if(!adjList.containsKey(src))
+            adjList.put(src, new ArrayList<>());
+        adjList.get(src).add(dest);
+    }
+    public ArrayList<Integer> getNeighbours(int src){
+        if(adjList.containsKey(src))
+            return adjList.get(src);
+        else
+            return null;
+    }
+    public ArrayList<Integer> visit(ArrayList<Integer> visited, int vertex){
+        visited.add(vertex);
+        return visited;
+    }
+    public ArrayList<Integer> dfs_recur(int vertex, HashMap<Integer, Boolean> marked, ArrayList<Integer> visited){
+        visit(visited, vertex);
+        marked.put(vertex, true);
+        ArrayList<Integer> neighbours = getNeighbours(vertex);
+        if(neighbours != null){
+            for(int i = 0; i < neighbours.size(); i++){
+                int w = neighbours.get(i);
+                if (!marked.getOrDefault(w, false)) 
+                    dfs_recur(w, marked, visited);
+            }
+        }
+        return visited;
+    }
+}
