@@ -1,9 +1,8 @@
-package DFS;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Graph_2d {
-    public int[][] gr;
+    public int[][] image;
     public Graph_2d(int len, int wid){
         this.gr = new int[len][wid];
     }
@@ -12,14 +11,14 @@ public class Graph_2d {
         gr[sc_x][sc_y] = 1;
         return gr;
     }
-    public boolean isValid(int x, int y, int[][] gr){
-        return(x >= 0 && y >= 0 && x < gr.length && y < gr[0].length);
+    public boolean isValid(int x, int y, int[][] image){
+        return(x >= 0 && y >= 0 && x < image.length && y < image[0].length);
     }
-    public ArrayList<int[]> getNeighbours(int x, int y){
+    public ArrayList<int[]> getNeighbours(int x, int y, int[][] image){
         ArrayList<int[]> neigh = new ArrayList<>();
         int[][] indices = {{x-1, y}, {x, y-1}, {x+1, y}, {x, y+1}};
         for(int i = 0; i < indices.length; i++){
-            if(isValid(indices[i][0], indices[i][1], gr) && gr[indices[i][0]][1] == gr[x][y]){
+            if(isValid(indices[i][0], indices[i][1], image) && image[indices[i][0]][indices[i][1]] == image[x][y]){
                 neigh.add(new int[]{indices[i][0], indices[i][1]});
             }
         }
@@ -40,5 +39,32 @@ public class Graph_2d {
         //if the neighbours set isn't null then every vertex in tht set is checked, is marked false then dfs is called on it agn
         //getOrDefault(a, b)-->checks the value of 'a' n returns it, if it's null then returns 'b'
         return visited;
+    }
+    public int[] pop(ArrayList<int[]> storage){
+        int[] b = storage.remove(0);
+        return b;
+    }
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+        if(image[sr][sc] == color)
+            return image;
+        int[] vertex;
+        boolean[][] visited = new boolean[image.length][image[0].length];
+        ArrayList<int[]> queue = new ArrayList<>();
+        ArrayList<int[]> neighbours;
+        queue.add(new int[]{sr, sc});
+        while(!queue.isEmpty()){
+            vertex = pop(queue);
+            neighbours = getNeighbours(vertex[0], vertex[1], image);
+            visited[vertex[0]][vertex[1]] = true;
+            image[vertex[0]][vertex[1]] = color;
+            for(int i = 0; i < neighbours.size(); i++){
+                vertex = neighbours.get(i);
+                if(visited[vertex[0]][vertex[1]] == false){
+                    queue.add(vertex)
+                    ;
+                }
+            }
+        }
+        return image;
     }
 }
