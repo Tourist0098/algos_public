@@ -2,6 +2,7 @@ package DFS;
 import java.util.*;
 
 public class Di_Graph {
+    int cycle_count = 0;
     public HashMap<Integer, ArrayList<Integer>> adjList;
     public Di_Graph(){
         this.adjList = new HashMap<>();
@@ -37,18 +38,39 @@ public class Di_Graph {
         }
         return visited;
     }
-//Under construction
-    public int cycle_count(int vertex, HashMap<Integer, Boolean> marked, ArrayList<Integer> visited){
-        int c = 0;
-        visit(visited, vertex);
-        marked.put(vertex, true);
-        ArrayList<Integer> neighbours = getNeighbours(vertex);
+    public boolean cycle_detector(int sr, boolean[] stack, boolean[] visited){
+        visited[sr] = true;
+        stack[sr] = true;
+        ArrayList<Integer> neighbours = getNeighbours(sr);
         if(neighbours != null){
             for(int i = 0; i < neighbours.size(); i++){
                 int w = neighbours.get(i);
-                if(marked.containsKey(w) == true)
-                    return c++;
+                if(visited[w] == false){
+                    if(cycle_detector( w, stack, visited))
+                        return true;
+                }
+                else if(visited[w] == true && stack[w] == true)
+                    return true;
             }
         }
+        stack[sr] = false;
+        return false;
+    }
+    public int cycle_counter(int sr, boolean[] stack, boolean[] visited){
+        visited[sr] = true;
+        stack[sr] = true;
+        ArrayList<Integer> neighbours = getNeighbours(sr);
+        if(neighbours != null){
+            for(int i = 0; i < neighbours.size(); i++){
+                int w = neighbours.get(i);
+                if(visited[w] == false){
+                    cycle_counter(w, stack, visited);
+                }
+                else if(visited[w] == true && stack[w] == true)
+                    cycle_count++;
+            }
+        }
+        stack[sr] = false;                  //for backtracking(when the pointer reaches a leaf node)
+        return cycle_count;    
     }
 }
