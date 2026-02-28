@@ -1,25 +1,24 @@
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
-public class Graph_2d {
+public class Graph_grid {
     public int[][] image;
-    public Graph_2d(int len, int wid){
-        this.gr = new int[len][wid];
+    public Graph_grid(int len, int wid){
+        this.image = new int[len][wid];
     }
     public int[][] addEdge(int sr_x, int sr_y, int sc_x, int sc_y){
-        gr[sr_x][sr_y] = 1;
-        gr[sc_x][sc_y] = 1;
-        return gr;
+        image[sr_x][sr_y] = 1;
+        image[sc_x][sc_y] = 1;
+        return image;
     }
-    public boolean isValid(int x, int y, int[][] image){
+    public boolean isValid(int x, int y){
         return(x >= 0 && y >= 0 && x < image.length && y < image[0].length);
     }
-    public ArrayList<int[]> getNeighbours(int x, int y, int[][] image){
+    public ArrayList<int[]> getNeighbours(int x, int y){
         ArrayList<int[]> neigh = new ArrayList<>();
         int[][] indices = {{x-1, y}, {x, y-1}, {x+1, y}, {x, y+1}};
-        for(int i = 0; i < indices.length; i++){
-            if(isValid(indices[i][0], indices[i][1], image) && image[indices[i][0]][indices[i][1]] == image[x][y]){
-                neigh.add(new int[]{indices[i][0], indices[i][1]});
+        for (int[] indice : indices) {
+            if (isValid(indice[0], indice[1]) && image[indice[0]][indice[1]] == image[x][y]) {
+                neigh.add(new int[]{indice[0], indice[1]});
             }
         }
         return neigh;
@@ -44,7 +43,7 @@ public class Graph_2d {
         int[] b = storage.remove(0);
         return b;
     }
-    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+    public int[][] floodFill(int sr, int sc, int color) {
         if(image[sr][sc] == color)
             return image;
         int[] vertex;
@@ -54,17 +53,36 @@ public class Graph_2d {
         queue.add(new int[]{sr, sc});
         while(!queue.isEmpty()){
             vertex = pop(queue);
-            neighbours = getNeighbours(vertex[0], vertex[1], image);
+            neighbours = getNeighbours(vertex[0], vertex[1]);
             visited[vertex[0]][vertex[1]] = true;
             image[vertex[0]][vertex[1]] = color;
             for(int i = 0; i < neighbours.size(); i++){
                 vertex = neighbours.get(i);
-                if(visited[vertex[0]][vertex[1]] == false){
-                    queue.add(vertex)
-                    ;
-                }
+                if(visited[vertex[0]][vertex[1]] == false)
+                    queue.add(vertex);
             }
         }
         return image;
+    }
+    public boolean check_path(int srx, int sry, int dsx, int dsy){
+        boolean[][] marked = new boolean[image.length][image[0].length];
+        Queue<int[]> storage = new LinkedList<>();
+        int[] curr = {srx, sry};
+        storage.add(curr);
+        if(marked[srx][sry] == false){
+            marked[srx][sry] = true;
+            while(!storage.isEmpty()){
+                int[] var = storage.poll();
+                for(int[] w : getNeighbours(var[0], var[1])){
+                    if(w[0] == dsx && w[1] == dsy)
+                        return true;
+                    if(marked[w[0]][w[1]] == false){
+                        marked[w[0]][w[1]] = true;
+                        storage.add(new int[]{w[0], w[1]});
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
