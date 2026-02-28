@@ -1,0 +1,61 @@
+public class graph {
+    ArrayList<ArrayList<Integer>> adjList;
+    public graph(int numVers){
+        this.adjList = new ArrayList<>();
+        for(int i = 0; i < numVers; i++){
+            adjList.add(new ArrayList<>());
+        }
+    }
+    public void addEdge(int x, int y){
+        adjList.get(x).add(y);
+    }
+    public ArrayList<Integer> bfs(int ver){
+        boolean[] marked = new boolean[adjList.size()];
+        ArrayList<Integer> visited = new ArrayList<>();
+        Queue<Integer> temp = new LinkedList<>();
+        temp.add(ver);
+        marked[ver] = true;
+        while(!temp.isEmpty()){
+            int var = temp.poll();
+            visited.add(var);
+            for(int w : adjList.get(var)){
+                if(marked[w] == false){
+                    marked[w] = true;
+                    temp.add(w);
+                }
+            }
+        }
+        return visited;
+    }
+    public ArrayList<Integer> shortestPath_bfs(int s, int e){
+        //calling bfs but keeping data of parent node
+        boolean[] marked = new boolean[adjList.size()];
+        int[] prev = new int[adjList.size()];
+        Arrays.fill(prev, -1);      //imp
+        Queue<Integer> temp = new LinkedList<>();
+        temp.add(s);
+        if(!marked[s]){
+            marked[s] = true;
+            while(!temp.isEmpty()){
+                int var = temp.poll();
+                for(int w : adjList.get(var)){
+                    if(marked[w] == false){
+                        marked[w] = true;
+                        prev[w] = var;
+                        temp.add(w);
+                    }
+                }
+            }
+        }
+        //reconstructing path
+        ArrayList<Integer> path = new ArrayList<>();
+        for(int var = e; var != -1; var = prev[var]){
+            path.add(var);
+        }
+        Collections.reverse(path);
+        if(path.get(0) == s)
+            return path;
+        path.clear();
+        return path;
+    }
+}
