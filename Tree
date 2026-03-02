@@ -41,4 +41,43 @@ public class Tree {
         }
         return leafValueCount;
     }
+    public static int heightOfTree_BFS(int root, ArrayList<ArrayList<Integer>> adjList){
+        if(root == -1)
+            return 0;
+        int height = 0;
+        boolean[] marked = new boolean[adjList.size()];
+        Queue<Integer> storage = new LinkedList<>();
+        storage.add(root);
+        if(marked[root] == false){
+            marked[root] = true;
+            height++;
+            while(!storage.isEmpty()){
+                int lvlSize = storage.size();
+                height++;
+                for(int i = 0; i < lvlSize; i++){
+                    int var = storage.poll();
+                    for(int w : getNeighbours(var, adjList)){
+                        if(marked[w] == false){
+                            marked[w] = true;
+                            storage.add(w);
+                        }
+                    }
+                    
+                }
+            }
+        }
+        return height;
+    }
+    
+    public static int heightOfTree_DFS(int root, ArrayList<ArrayList<Integer>> adjList){
+        int height = 0;
+        if(isLeaf(root, adjList))
+            return 0;
+        ArrayList<Integer> neighbours = getNeighbours(root, adjList);
+        for(int w : neighbours){
+            int childHeight = heightOfTree_DFS(w, adjList);
+            height = Math.max(height, childHeight);
+        }
+        return height + 1;
+    }
 }
