@@ -81,3 +81,28 @@ public class Tree {
         return height + 1;
     }
 }
+//rooting a tree
+class treeNode{
+    int id;
+    treeNode parent;
+    ArrayList<treeNode> children;
+    public treeNode(int id, treeNode parent){
+        this.id = id;
+        this.parent = parent;
+        this.children = new ArrayList<>();
+    }
+    public treeNode rootTree(ArrayList<ArrayList<Integer>> tree, int id){
+        treeNode root = new treeNode(id, null);
+        return buildTree(tree, root, null);
+    }
+    public treeNode buildTree(ArrayList<ArrayList<Integer>> tree, treeNode curr, treeNode parent){
+        for(int neighID : tree.get(curr.id)){
+            if(parent != null && neighID == parent.id)
+                continue;
+            treeNode child = new treeNode(neighID, curr);
+            curr.children.add(child);
+            buildTree(tree, child, curr);
+        }
+        return curr;
+    }
+}
