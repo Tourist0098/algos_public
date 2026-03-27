@@ -1,0 +1,77 @@
+public class treeNode{
+    int id;
+    treeNode parent;
+    ArrayList<treeNode> children;
+    public treeNode(int id, treeNode parent){
+        this.id = id;
+        this.parent = parent;
+        this.children = new ArrayList<>();
+    }
+    public treeNode rootTree(ArrayList<ArrayList<Integer>> tree, int id){
+        treeNode root = new treeNode(id, null);
+        return buildTree(tree, root, null);
+    }
+    public treeNode buildTree(ArrayList<ArrayList<Integer>> tree, treeNode curr, treeNode parent){
+        for(int neighID : tree.get(curr.id)){
+            if(parent != null && neighID == parent.id)
+                continue;
+            treeNode child = new treeNode(neighID, curr);
+            curr.children.add(child);
+            buildTree(tree, child, curr);
+        }
+        return curr;
+    }
+    public List<Integer> treeCenters(ArrayList<ArrayList<Integer>> tree){
+        int n = tree.size();
+        Queue<Integer> leaves = new LinkedList<>();
+        int[] degrees = new int[n];
+        for(int i = 0; i < n; i++){
+            degrees[i] = tree.get(i).size();
+            if(degrees[i] <= 1)
+                leaves.add(i);
+        }
+        while(n > 2){
+            int ls = leaves.size();
+            for(int i = 0; i < ls; i++){
+                int cur = leaves.poll();
+                for(int neigh : tree.get(cur)){
+                    degrees[neigh]--;
+                    if(degrees[neigh] == 1)
+                        leaves.add(neigh);
+                    degrees[cur] = 0;
+                }
+            }
+            n -= ls;
+        }
+        return new ArrayList(leaves);
+    }
+    public String encode(treeNode root){
+        if(root == null)
+            return "";
+        List<String> labels = new ArrayList<>();
+        for(treeNode child : root.children){
+            labels.add(encode(child));
+        }
+        Collections.sort(labels);
+        StringBuilder res = new StringBuilder();
+        for(String i : labels){
+            res.append(i);
+        }
+        return "(" + res.toString() + ")";
+    }
+    public boolean isIsomorphic(ArrayList<ArrayList<Integer>> tree1, ArrayList<ArrayList<Integer>> tree2){
+        List<Integer> t1 = treeCenters(tree1);
+        List<Integer> t2 = treeCenters(tree2);
+        for(int c : t1){
+            treeNode rot1 = rootTree(tree1, c);
+            String t1enc = encode(rot1);
+            for(int center : t2){
+                treeNode rot2 = rootTree(tree2, center);
+                String t2enc = encode(rot2);
+                if(t1enc.equals(t2enc))
+                    return true;
+            }
+        }
+        return false;
+    }
+}
